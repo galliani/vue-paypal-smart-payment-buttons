@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="paypal-smart-payment-buttons-checkout">
     <div :id="buttonUniqueReference"></div>
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'checkout',
   props: {
     cart: {
       type: Object,

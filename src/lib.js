@@ -1,3 +1,3 @@
-import vuePaypalSmartPaymentButtons from './components/hello'
+import vuePaypalSmartPaymentButtons from './components/checkout'
 
 export default vuePaypalSmartPaymentButtons
