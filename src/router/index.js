@@ -9,7 +9,10 @@ export default new Router({
     {
       path: '/',
       name: 'Hello',
-      component: Hello
+      component: Hello,
+      props: {
+        buttonUniqueReference: "paypal-container-random-uid"
+      }
     }
   ]
 })

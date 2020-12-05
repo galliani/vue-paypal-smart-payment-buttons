@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <div :id="buttonUniqueReference"></div>
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -23,9 +24,57 @@
 <script>
 export default {
   name: 'hello',
-  data () {
+  props: {
+    buttonUniqueReference: {
+      type: String,
+      required: true
+    }    
+  },  
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      order: {
+        // reference: https://developer.paypal.com/docs/api/orders/v2/
+        // payer: {},
+        intent: 'CAPTURE', // 'CAPTURE' || 'AUTHORIZE'
+        purchase_units: [
+          {
+            description: "Buy thing",
+            amount: {
+              currency_code: "USD",
+              value: 100
+            }
+          }
+        ]
+      }
+    };
+  },
+  mounted: function() {
+    this.setLoaded();  
+  },
+  computed: {
+    // This is important to enable displaying multiple (a group of) smart buttons in a single page
+    // by assigning each with unique identifier, we can refer it and render each dnyamically
+    dynamicSelectorContainer() {
+      return '#' + this.buttonUniqueReference;
+    }
+  },
+  methods: {
+    setLoaded: function() {
+      window.paypal
+        .Buttons({
+          createOrder: (data, actions) => {
+            return actions.order.create(this.order);
+          },
+          onApprove: async (data, actions) => {
+            await actions.order.capture();
+            // ajax request
+          },
+          onError: err => {
+            console.log(err);
+          }
+        })
+        .render(this.dynamicSelectorContainer);
     }
   }
 }
