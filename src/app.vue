@@ -1,13 +1,31 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <router-view></router-view>
+    <router-view
+      @paypal-order-created="processing"
+      @paypal-order-approved="finishing"
+      @paypal-order-failed="failing"    
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  methods: {
+    processing(paypalOrderId) {
+      console.log('processing!!!');
+    },
+
+    finishing: async(order) => {
+      alert('success!!');
+    },      
+
+    failing(error) {
+      console.log(error);
+      alert(error);
+    }    
+  }
 }
 </script>
 

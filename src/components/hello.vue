@@ -4,19 +4,8 @@
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
       <br>
       <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
   </div>
 </template>
@@ -25,31 +14,52 @@
 export default {
   name: 'hello',
   props: {
+    cart: {
+      type: Object,
+      // Object or array defaults must be returned from
+      // a factory function
+      default: function () {
+        return {
+          intent: '',
+          payer:  null,
+          items:  []
+        }
+      }
+    },
     buttonUniqueReference: {
       type: String,
       required: true
-    }    
-  },  
+    }
+  },
   data() {
+    const defaultPurchaseUnit = {
+      reference_id: null,
+      description: "lorem",
+      amount: {
+        currency_code: "USD",
+        value: 100
+      }
+    };
+
     return {
       msg: 'Welcome to Your Vue.js App',
       order: {
-        // reference: https://developer.paypal.com/docs/api/orders/v2/
-        // payer: {},
-        intent: 'CAPTURE', // 'CAPTURE' || 'AUTHORIZE'
-        purchase_units: [
-          {
-            description: "Buy thing",
-            amount: {
-              currency_code: "USD",
-              value: 100
-            }
-          }
-        ]
+        intent:             'CAPTURE',
+        payer:              {},
+        purchase_units:     [{ ...defaultPurchaseUnit }]
       }
-    };
-  },
+    }
+  },  
   mounted: function() {
+    this.order.intent         = this.cart.intent;
+    this.order.purchase_units = this.cart.items;
+
+    if (this.cart.payer) {
+      this.order.payer        = this.cart.payer;
+    }
+
+    console.log(this.order)
+
     this.setLoaded();  
   },
   computed: {
@@ -63,15 +73,22 @@ export default {
     setLoaded: function() {
       window.paypal
         .Buttons({
-          createOrder: (data, actions) => {
-            return actions.order.create(this.order);
+          createOrder: async (data, actions) => {
+            const paypalOrderId = await actions.order.create(this.order);
+
+            this.$emit('paypal-order-created', paypalOrderId);
+
+            // HAS to return the ID for the checkout process to run smoothly
+            return paypalOrderId;
           },
           onApprove: async (data, actions) => {
-            await actions.order.capture();
-            // ajax request
+            const order = await actions.order.capture();
+            // for complete reference of order object: https://developer.paypal.com/docs/api/orders/v2
+
+            return this.$emit('paypal-order-approved', order);
           },
           onError: err => {
-            console.log(err);
+            this.$emit('paypal-order-failed', err)
           }
         })
         .render(this.dynamicSelectorContainer);

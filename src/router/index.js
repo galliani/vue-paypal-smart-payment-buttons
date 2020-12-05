@@ -11,7 +11,20 @@ export default new Router({
       name: 'Hello',
       component: Hello,
       props: {
-        buttonUniqueReference: "paypal-container-random-uid"
+        buttonUniqueReference: "paypal-container-random-uid",
+        cart: {
+          intent: 'CAPTURE',
+          items: [
+            {
+              reference_id: 16,
+              description: 'Product A',
+              amount: {
+                currency_code: 'USD',
+                value: 20
+              }
+            }
+          ]
+        }
       }
     }
   ]
