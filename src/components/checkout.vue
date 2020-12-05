@@ -1,12 +1,6 @@
 <template>
   <div class="paypal-smart-payment-buttons-checkout">
     <div :id="buttonUniqueReference"></div>
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
   </div>
 </template>
 
@@ -42,7 +36,6 @@ export default {
     };
 
     return {
-      msg: 'Welcome to Your Vue.js App',
       order: {
         intent:             'CAPTURE',
         payer:              {},
@@ -57,8 +50,6 @@ export default {
     if (this.cart.payer) {
       this.order.payer        = this.cart.payer;
     }
-
-    console.log(this.order)
 
     this.setLoaded();  
   },
@@ -96,24 +87,3 @@ export default {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
-</style>

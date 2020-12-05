@@ -1,7 +1,7 @@
-import Vue from 'vue'
+import Vue        from 'vue'
 import LoadScript from 'vue-plugin-load-script';
-import App from './app'
-import router from './router'
+import App        from './app'
+import router     from './router'
 
 Vue.use(LoadScript);
 Vue.config.productionTip = false
